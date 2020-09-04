@@ -3,17 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 
 class AddConteudo extends StatefulWidget {
+  AddConteudo({Key key, this.github, this.id_user}) : super(key: key);
+  final int id_user;
+  final String github;
   @override
   _AddConteudoState createState() => _AddConteudoState();
 }
 
-final form = GlobalKey<FormState>();
-
 class _AddConteudoState extends State<AddConteudo> {
+  final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
 
-  void connection() async {
-    var config = ConnectionSettings();
+  String titulo, rapida_descricao, descricao;
+
+  void connection(titulo, github, rapida_descricao, descricao, id_user) async {
+    var settings = ConnectionSettings(
+      host: "",
+      user: "",
+      password: "",
+      db: "",
+      port: 0000,
+    );
+    var conn = await MySqlConnection.connect(settings);
+    var results = conn.query(
+        "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null, ?,?,?,?,?)",
+        [titulo, github, rapida_descricao, descricao, id_user]);
   }
 
   @override
@@ -33,27 +47,28 @@ class _AddConteudoState extends State<AddConteudo> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                formulario(
+                /*formulario(
                     TextInputType.text, "Digite seu Nome", "Nome não inserido"),
                 formulario(TextInputType.emailAddress, "Digite seu Email",
                     "Email não inserido ou errado"),
                 formutexto(TextInputType.url,
-                    "Digite o link do seu github (opcional)", ""),
+                    "Digite o link do seu github (opcional)", ""),*/
                 formutexto(TextInputType.url,
                     "Digite o link do projeto no github (opcional)", ""),
                 formulario(TextInputType.text, "Digite o Título",
                     "Título não informado"),
                 formulario(
                     TextInputType.text, "Uma breve descrição", "Não informado"),
-                formulario(TextInputType.text, "Digite o Título",
-                    "Título não informado"),
+                formulario(TextInputType.text, "Texto", "Título não informado"),
                 Tooltip(
                   message: "Fazer publicação desse artigo",
                   child: RaisedButton(
                       onPressed: () {
                         if (form.currentState.validate()) {
-                          Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: (context) => Nav()));
+                          connection(titulo, widget.github, rapida_descricao,
+                              descricao, widget.id_user);
+                          /*Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => Nav()));*/
                         } else {
                           snack.currentState.showSnackBar(SnackBar(
                             content: Text("Algo de errado..."),

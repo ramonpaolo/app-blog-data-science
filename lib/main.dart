@@ -33,19 +33,13 @@ class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "Bem Vindo a Data Science Corporation",
-              style: TextStyle(color: Colors.white, fontSize: 24),
-            )
-          ],
-        ),
-      ),
-    );
+        backgroundColor: Colors.red,
+        body: Container(
+          child: Center(
+              child: Text(
+            "Bem Vindo a Data Science",
+            style: TextStyle(color: Colors.white, fontSize: 24),
+          )),
+        ));
   }
 }

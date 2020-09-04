@@ -1,4 +1,3 @@
-import 'package:blog_data_science/routes/data/Data.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

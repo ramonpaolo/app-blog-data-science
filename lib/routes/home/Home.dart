@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          tooltip: "Mostrar mais",
+          tooltip: "Mostrar publicações mais antigas",
           child: Icon(Icons.refresh),
         ),
         body: FutureBuilder(

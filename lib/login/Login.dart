@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './Cadastro.dart';
 import '../navigation/Nav.dart';
-import 'dart:async';
+import 'package:mysql1/mysql1.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -9,9 +9,54 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final snack = GlobalKey<ScaffoldState>();
+
+  String email = "";
+  String senha = "";
+  int valor;
+  bool mostrar_snack = false;
+
+  Future connect(email, senha) async {
+    var settings = ConnectionSettings(
+      host: "",
+      user: "",
+      password: "",
+      db: "",
+      port: 0000,
+    );
+    var conn = await MySqlConnection.connect(settings);
+    var results = conn.query(
+        "select * from users where email = ? and senha = ?", [email, senha]);
+    results.then((value) {
+      setState(() {
+        if (value.length == 1) {
+          Map dados = {};
+          value.forEach((element) {
+            dados = {"github": element["github"], "id": element["id_user"]};
+          });
+
+          print("Usuário cadastrado");
+          mostrar_snack = true;
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Nav(
+                  github: dados["github"],
+                  id_user: dados["id"],
+                ),
+              ));
+        } else {
+          mostrar_snack = false;
+          print("Usuário não cadastrado");
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: snack,
         appBar: AppBar(
           title: Text("Data-Science"),
           backgroundColor: Colors.red,
@@ -24,7 +69,7 @@ class _LoginState extends State<Login> {
                   children: [
                     Image.asset(
                       "assets/python.png",
-                      width: 200,
+                      width: 150,
                       filterQuality: FilterQuality.high,
                       fit: BoxFit.fill,
                     ),
@@ -34,18 +79,34 @@ class _LoginState extends State<Login> {
                     ),
                     TextField(
                       keyboardType: TextInputType.emailAddress,
+                      onChanged: (context) {
+                        setState(() {
+                          email = context;
+                          print(email);
+                        });
+                      },
                       decoration:
                           InputDecoration(labelText: "Digite seu email"),
                     ),
                     TextField(
+                      obscureText: true,
+                      onChanged: (context) {
+                        setState(() {
+                          senha = context;
+                          print(senha);
+                        });
+                      },
                       keyboardType: TextInputType.visiblePassword,
                       decoration:
                           InputDecoration(labelText: "Digite sua senha: "),
                     ),
                     RaisedButton(
                       onPressed: () {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => Nav()));
+                        connect(email, senha);
+                        if (mostrar_snack == false) {
+                          snack.currentState.showSnackBar(
+                              SnackBar(content: Text("Email ou senha errado")));
+                        }
                       },
                       child: Text(
                         "Login",
