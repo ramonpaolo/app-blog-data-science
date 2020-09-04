@@ -4,9 +4,10 @@ import '../routes/pub/AddConteudo.dart';
 import '../routes/user/User.dart';
 
 class Nav extends StatefulWidget {
-  Nav({Key key, this.github, this.id_user}) : super(key: key);
+  Nav({Key key, this.github, this.id_user, this.email}) : super(key: key);
   final String github;
   final int id_user;
+  final String email;
 
   @override
   _NavState createState() => _NavState();
@@ -14,7 +15,12 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> {
   int index = 0;
-  List widgets = [Home(), Users()];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +44,16 @@ class _NavState extends State<Nav> {
           )
         ],
       ),
-      body: widgets[index],
+      body: index == 0
+          ? Home()
+          : Users(
+              email: widget.email,
+            ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (i) {
             setState(() {
               index = i;
+              print(widget.email);
             });
           },
           currentIndex: index,

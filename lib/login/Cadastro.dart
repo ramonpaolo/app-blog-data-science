@@ -1,6 +1,9 @@
 import '../navigation/Nav.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
+import 'dart:async';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
 
 class Cadastro extends StatefulWidget {
   @override
@@ -8,27 +11,38 @@ class Cadastro extends StatefulWidget {
 }
 
 class _CadastroState extends State<Cadastro> {
+  /*Map dados = {};
+
+  var j;
+  Future _requestTempDirectory() async {
+    await rootBundle.loadString("assets/db.json").then((value) {
+      dados = {"user": value};
+    });
+    j = await json.encode(dados);
+    //dados = {"user": j};
+    print(await dados["user"]["user"]);
+    //print(dados["user"]);
+  }*/
+
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
+
+  Map jsonData = {};
 
   String nome = "";
   String email = "";
   String senha = "";
   String github = "";
   String linkedin = "";
+
   int valores = 0;
+
   bool user = false;
 
   Future connection(nome, email, senha, github, linkedin) async {
     valores = 0;
     //print(email);
-    var settings = ConnectionSettings(
-      host: "",
-      user: "",
-      password: "",
-      db: "",
-      port: 0000,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     var results =
         await conn.query("select email from users where email = ?", [email]);
@@ -38,7 +52,6 @@ class _CadastroState extends State<Cadastro> {
         setState(() {
           valores++;
         });
-      valores++;
     });
     print(valores);
     if (valores == 0) {
@@ -47,7 +60,7 @@ class _CadastroState extends State<Cadastro> {
           [nome, email, senha, github, linkedin]);
 
       user = true;
-    } else if (valores >= 1) {
+    } else if (valores == 1) {
       user = false;
       print("Já tem cadastrado: " + valores.toString());
     }
@@ -57,7 +70,18 @@ class _CadastroState extends State<Cadastro> {
     Navigator.of(context).popUntil((route) => route.isFirst);
 
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Nav()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => Nav(
+                  email: email,
+                )));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    //_requestTempDirectory();
+    super.initState();
   }
 
   @override
@@ -94,6 +118,7 @@ class _CadastroState extends State<Cadastro> {
                           "Digite aqui sua senha:", senha),
                       RaisedButton(
                         onPressed: () async {
+                          //_requestTempDirectory();
                           if (form.currentState.validate()) {
                             await connection(
                                 nome, email, senha, github, linkedin);

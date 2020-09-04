@@ -14,43 +14,39 @@ class _LoginState extends State<Login> {
   String email = "";
   String senha = "";
   int valor;
-  bool mostrar_snack = false;
+  Map dados = {};
 
   Future connect(email, senha) async {
-    var settings = ConnectionSettings(
-      host: "",
-      user: "",
-      password: "",
-      db: "",
-      port: 0000,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     var results = conn.query(
         "select * from users where email = ? and senha = ?", [email, senha]);
     results.then((value) {
-      setState(() {
-        if (value.length == 1) {
-          Map dados = {};
-          value.forEach((element) {
-            dados = {"github": element["github"], "id": element["id_user"]};
-          });
+      if (value.length == 0) {
+        mostrarSnack();
+        print("Usuário não cadastrado");
+      } else {
+        value.forEach((element) {
+          dados = {"github": element["github"], "id": element["id_user"]};
+        });
 
-          print("Usuário cadastrado");
-          mostrar_snack = true;
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Nav(
-                  github: dados["github"],
-                  id_user: dados["id"],
-                ),
-              ));
-        } else {
-          mostrar_snack = false;
-          print("Usuário não cadastrado");
-        }
-      });
+        print("Usuário cadastrado");
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Nav(
+                github: dados["github"],
+                id_user: dados["id"],
+                email: email,
+              ),
+            ));
+      }
     });
+  }
+
+  void mostrarSnack() async {
+    snack.currentState
+        .showSnackBar(SnackBar(content: Text("Usuário não cadastrado")));
   }
 
   @override
@@ -101,12 +97,8 @@ class _LoginState extends State<Login> {
                           InputDecoration(labelText: "Digite sua senha: "),
                     ),
                     RaisedButton(
-                      onPressed: () {
-                        connect(email, senha);
-                        if (mostrar_snack == false) {
-                          snack.currentState.showSnackBar(
-                              SnackBar(content: Text("Email ou senha errado")));
-                        }
+                      onPressed: () async {
+                        await connect(email, senha);
                       },
                       child: Text(
                         "Login",

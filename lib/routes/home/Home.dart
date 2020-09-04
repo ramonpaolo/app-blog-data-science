@@ -14,13 +14,7 @@ class _HomeState extends State<Home> {
   List projetos = [];
 
   Future<dynamic> getFutureDados() async {
-    var settings = ConnectionSettings(
-      host: "",
-      user: "",
-      password: "",
-      db: "",
-      port: 0000,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     var results = conn.query("select * from conteudo");
     await results
@@ -48,7 +42,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          tooltip: "Mostrar publicações mais antigas",
+          tooltip: "Mostrar publicação mais antigas",
           child: Icon(Icons.refresh),
         ),
         body: FutureBuilder(
@@ -88,7 +82,7 @@ class _HomeState extends State<Home> {
                             ))));
                   });
             } else {
-              return CupertinoActivityIndicator();
+              return Center(child: CircularProgressIndicator());
             }
           },
         ));

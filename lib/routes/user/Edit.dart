@@ -20,14 +20,8 @@ class _EditState extends State<Edit> {
   String github;
   String linkedin;
 
-  void connection(id, email, github, linkedin) async {
-    var settings = ConnectionSettings(
-      host: "",
-      user: "",
-      password: "",
-      db: "",
-      port: 0000,
-    );
+  Future connection(id, email, github, linkedin) async {
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     var results = await conn
         .query("update users set github = ? where id_user = ?", [github, id]);

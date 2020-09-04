@@ -14,20 +14,19 @@ class _AddConteudoState extends State<AddConteudo> {
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
 
-  String titulo, rapida_descricao, descricao;
+  String titulo, rapida_descricao;
+  String descricao;
+  String github;
 
   void connection(titulo, github, rapida_descricao, descricao, id_user) async {
-    var settings = ConnectionSettings(
-      host: "",
-      user: "",
-      password: "",
-      db: "",
-      port: 0000,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     var results = conn.query(
         "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null, ?,?,?,?,?)",
-        [titulo, github, rapida_descricao, descricao, id_user]);
+        [titulo, widget.github, rapida_descricao, descricao, id_user]);
+    Navigator.of(context).pop();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Nav()));
   }
 
   @override
@@ -47,28 +46,24 @@ class _AddConteudoState extends State<AddConteudo> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                /*formulario(
-                    TextInputType.text, "Digite seu Nome", "Nome não inserido"),
-                formulario(TextInputType.emailAddress, "Digite seu Email",
-                    "Email não inserido ou errado"),
-                formutexto(TextInputType.url,
-                    "Digite o link do seu github (opcional)", ""),*/
-                formutexto(TextInputType.url,
-                    "Digite o link do projeto no github (opcional)", ""),
+                formutexto(
+                  TextInputType.url,
+                  "Digite o link do projeto no github (opcional)",
+                  github,
+                ),
                 formulario(TextInputType.text, "Digite o Título",
-                    "Título não informado"),
-                formulario(
-                    TextInputType.text, "Uma breve descrição", "Não informado"),
-                formulario(TextInputType.text, "Texto", "Título não informado"),
+                    "Título não informado", titulo),
+                formulario(TextInputType.text, "Uma breve descrição",
+                    "Breve descrição não informado", rapida_descricao),
+                formulario(TextInputType.text, "Descrição",
+                    "Descrição não informada", descricao),
                 Tooltip(
                   message: "Fazer publicação desse artigo",
                   child: RaisedButton(
                       onPressed: () {
                         if (form.currentState.validate()) {
-                          connection(titulo, widget.github, rapida_descricao,
+                          connection(titulo, github, rapida_descricao,
                               descricao, widget.id_user);
-                          /*Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: (context) => Nav()));*/
                         } else {
                           snack.currentState.showSnackBar(SnackBar(
                             content: Text("Algo de errado..."),
@@ -80,30 +75,54 @@ class _AddConteudoState extends State<AddConteudo> {
                         "Fazer Publicação",
                         style: TextStyle(color: Colors.white),
                       )),
-                )
+                ),
               ],
             ),
           ),
         ))));
   }
-}
 
-Widget formulario(TextInputType type, String texto, String error) {
-  return TextFormField(
-    keyboardType: type,
-    validator: (value) {
-      if (value.isEmpty) {
-        return "$error";
-      }
-      return null;
-    },
-    decoration: InputDecoration(labelText: "$texto"),
-  );
-}
+  Widget formulario(
+    TextInputType type,
+    String texto,
+    String error,
+    String text,
+  ) {
+    return TextFormField(
+      keyboardType: type,
+      onChanged: (context) {
+        setState(() {
+          if (text == titulo) {
+            titulo = context;
+            print(titulo);
+          } else if (text == rapida_descricao) {
+            rapida_descricao = context;
+            print(rapida_descricao);
+          } else if (text == descricao) {
+            descricao = context;
+            print(descricao);
+          }
+        });
+      },
+      validator: (value) {
+        if (value.isEmpty) {
+          return "$error";
+        }
+        return null;
+      },
+      decoration: InputDecoration(labelText: "$texto"),
+    );
+  }
 
-Widget formutexto(TextInputType type, String texto, String error) {
-  return TextField(
-    keyboardType: type,
-    decoration: InputDecoration(labelText: "$texto"),
-  );
+  Widget formutexto(TextInputType type, String texto, String variavel) {
+    return TextField(
+      keyboardType: type,
+      onChanged: (value) {
+        setState(() {
+          variavel = value;
+        });
+      },
+      decoration: InputDecoration(labelText: "$texto"),
+    );
+  }
 }

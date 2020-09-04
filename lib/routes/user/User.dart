@@ -4,9 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import './Edit.dart';
 
 class Users extends StatefulWidget {
-  Users({Key key, this.email, this.github, this.likedin}) : super(key: key);
-  final String github;
-  final String likedin;
+  Users({Key key, this.email}) : super(key: key);
   final String email;
 
   @override
@@ -16,28 +14,23 @@ class Users extends StatefulWidget {
 class _UsersState extends State<Users> {
   Map user = {};
 
-  Future<dynamic> getFutureDados() async {
-    var settings = mysql.ConnectionSettings(
-      host: "",
-      user: "",
-      password: "",
-      db: "",
-      port: 0000,
-    );
+  Future<dynamic> getFutureDados(e) async {
+    var settings = mysql.ConnectionSettings();
     var conn = await mysql.MySqlConnection.connect(settings);
-    var results = conn.query("select * from users where id_user = 1");
+    var results =
+        conn.query("select * from users where email = ?", [widget.email]);
     await results
         .then((value) => {
               value.forEach((element) {
-                if (element["id_user"] != user["id"])
-                  return user = {
-                    "id": element["id_user"],
-                    "name": element["nome"],
-                    "email": element["email"],
-                    "github": element["github"],
-                    "linkedin": element["linkedin"]
-                  };
-              })
+                return user = {
+                  "id": element["id_user"],
+                  "name": element["nome"],
+                  "email": element["email"],
+                  "github": element["github"],
+                  "linkedin": element["linkedin"]
+                };
+              }),
+              print("Linkedin: " + user["linkedin"])
             })
         .catchError((onError) => print("Errorr: ${onError}"));
 
@@ -61,7 +54,7 @@ class _UsersState extends State<Users> {
       child: Container(
           child: FutureBuilder(
               initialData: "Aguarde",
-              future: getFutureDados(),
+              future: getFutureDados(widget.email),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Column(
