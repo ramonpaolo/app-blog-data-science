@@ -11,20 +11,25 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final snack = GlobalKey<ScaffoldState>();
 
-  String email = "";
-  String senha = "";
+  String email;
+  String senha;
   int valor;
-  Map dados = {};
+  Map dados;
 
   Future connect(email, senha) async {
-    var settings = ConnectionSettings();
+    var settings = ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await MySqlConnection.connect(settings);
-    var results = conn.query(
-        "select * from users where email = ? and senha = ?", [email, senha]);
-    results.then((value) {
+    conn.query("select * from users where email = ? and senha = ?",
+        [email, senha]).then((value) {
       if (value.length == 0) {
         mostrarSnack();
-        print("Usuário não cadastrado");
+        //print("Usuário não cadastrado");
       } else {
         value.forEach((element) {
           dados = {"github": element["github"], "id": element["id_user"]};
@@ -78,7 +83,7 @@ class _LoginState extends State<Login> {
                       onChanged: (context) {
                         setState(() {
                           email = context;
-                          print(email);
+                          print("Email: $email");
                         });
                       },
                       decoration:
@@ -89,7 +94,7 @@ class _LoginState extends State<Login> {
                       onChanged: (context) {
                         setState(() {
                           senha = context;
-                          print(senha);
+                          print("Senha: $senha");
                         });
                       },
                       keyboardType: TextInputType.visiblePassword,

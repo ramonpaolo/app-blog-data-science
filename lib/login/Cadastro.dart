@@ -2,8 +2,6 @@ import '../navigation/Nav.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
-import 'package:flutter/services.dart' show rootBundle;
-import 'dart:convert';
 
 class Cadastro extends StatefulWidget {
   @override
@@ -11,9 +9,10 @@ class Cadastro extends StatefulWidget {
 }
 
 class _CadastroState extends State<Cadastro> {
-  /*Map dados = {};
-
-  var j;
+/*  
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+var j;
   Future _requestTempDirectory() async {
     await rootBundle.loadString("assets/db.json").then((value) {
       dados = {"user": value};
@@ -27,27 +26,28 @@ class _CadastroState extends State<Cadastro> {
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
 
-  Map jsonData = {};
-
-  String nome = "";
-  String email = "";
-  String senha = "";
-  String github = "";
-  String linkedin = "";
-
-  int valores = 0;
-
+  Map jsonData;
+  String nome;
+  String email;
+  String senha;
+  String github = "https://github.com/";
+  String linkedin = "https://linkedin/in/";
+  int valores;
   bool user = false;
 
   Future connection(nome, email, senha, github, linkedin) async {
     valores = 0;
-    //print(email);
-    var settings = ConnectionSettings();
+    var settings = ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await MySqlConnection.connect(settings);
     var results =
         await conn.query("select email from users where email = ?", [email]);
     results.forEach((element) {
-      print(element);
       if (mounted)
         setState(() {
           valores++;
@@ -108,13 +108,13 @@ class _CadastroState extends State<Cadastro> {
                           TextInputType.url,
                           "Digite o link do github (opcional):",
                           github,
-                          "https://github.com/"),
+                          github),
                       formulario(
                           false,
                           TextInputType.url,
                           "Digite seu linkedin (opcional):",
                           linkedin,
-                          "https://linkedin/in/"),
+                          linkedin),
                       formulario(true, TextInputType.visiblePassword,
                           "Digite aqui sua senha:", senha, ""),
                       RaisedButton(

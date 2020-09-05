@@ -22,7 +22,13 @@ class _EditState extends State<Edit> {
   bool snack = false;
 
   Future connection(id, email, github, linkedin) async {
-    var settings = ConnectionSettings();
+    var settings = ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await MySqlConnection.connect(settings);
     var results = await conn
         .query("update users set github = ? where id_user = ?", [github, id]);
