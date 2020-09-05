@@ -16,13 +16,7 @@ class _HomeState extends State<Home> {
   int limite = 15;
 
   Future<dynamic> getFutureDados() async {
-    var settings = ConnectionSettings(
-      host: "mysql669.umbler.com",
-      user: "ramon_paolo",
-      password: "familiAMaram12.",
-      db: "data-science",
-      port: 41890,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     var results = conn.query("select * from conteudo");
     await results

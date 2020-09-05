@@ -17,13 +17,7 @@ class _LoginState extends State<Login> {
   Map dados;
 
   Future connect(email, senha) async {
-    var settings = ConnectionSettings(
-      host: "mysql669.umbler.com",
-      user: "ramon_paolo",
-      password: "familiAMaram12.",
-      db: "data-science",
-      port: 41890,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     conn.query("select * from users where email = ? and senha = ?",
         [email, senha]).then((value) {
