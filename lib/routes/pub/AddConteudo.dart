@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 
 class AddConteudo extends StatefulWidget {
-  AddConteudo({Key key, this.github, this.id_user}) : super(key: key);
+  AddConteudo({Key key, this.github, this.id_user, this.email})
+      : super(key: key);
   final int id_user;
   final String github;
+  final String email;
   @override
   _AddConteudoState createState() => _AddConteudoState();
 }
@@ -14,19 +16,22 @@ class _AddConteudoState extends State<AddConteudo> {
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
 
-  String titulo, rapida_descricao;
-  String descricao;
-  String github;
+  String titulo, rapida_descricao, descricao, github;
 
   void connection(titulo, github, rapida_descricao, descricao, id_user) async {
     var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
-    var results = conn.query(
-        "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null, ?,?,?,?,?)",
-        [titulo, widget.github, rapida_descricao, descricao, id_user]);
+    conn.query(
+        "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null,?,?,?,?,?)",
+        [titulo, github, rapida_descricao, descricao, id_user]);
     Navigator.of(context).pop();
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Nav()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => Nav(
+                  email: widget.email,
+                  github: github,
+                )));
   }
 
   @override
@@ -46,11 +51,11 @@ class _AddConteudoState extends State<AddConteudo> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                formutexto(
-                  TextInputType.url,
-                  "Digite o link do projeto no github (opcional)",
-                  github,
-                ),
+                formulario(
+                    TextInputType.url,
+                    "Digite o link do projeto no github (opcional)",
+                    "",
+                    github),
                 formulario(TextInputType.text, "Digite o Título",
                     "Título não informado", titulo),
                 formulario(TextInputType.text, "Uma breve descrição",
@@ -66,7 +71,7 @@ class _AddConteudoState extends State<AddConteudo> {
                               descricao, widget.id_user);
                         } else {
                           snack.currentState.showSnackBar(SnackBar(
-                            content: Text("Algo de errado..."),
+                            content: Text("Campos invalidos"),
                             duration: Duration(seconds: 2),
                           ));
                         }
@@ -94,33 +99,25 @@ class _AddConteudoState extends State<AddConteudo> {
         setState(() {
           if (text == titulo) {
             titulo = context;
-            print(titulo);
+            print("Título: $titulo");
           } else if (text == rapida_descricao) {
             rapida_descricao = context;
-            print(rapida_descricao);
+            print("Rápida descrição: $rapida_descricao");
           } else if (text == descricao) {
             descricao = context;
-            print(descricao);
+            print("Descrição: $descricao");
+          } else if (text == github) {
+            github = context;
+            print("Github: $github");
           }
         });
       },
       validator: (value) {
-        if (value.isEmpty) {
-          return "$error";
+        if (error != "") {
+          if (value.isEmpty) {
+            return "$error";
+          }
         }
-        return null;
-      },
-      decoration: InputDecoration(labelText: "$texto"),
-    );
-  }
-
-  Widget formutexto(TextInputType type, String texto, String variavel) {
-    return TextField(
-      keyboardType: type,
-      onChanged: (value) {
-        setState(() {
-          variavel = value;
-        });
       },
       decoration: InputDecoration(labelText: "$texto"),
     );

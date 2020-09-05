@@ -27,6 +27,7 @@ class _VisualizacaoState extends State<Visualizacao> {
     if (await canLaunch("${url}")) {
       launch(url);
     } else {
+      print("Deu erro no link: $url");
       throw "Operação não pode ser realizada";
     }
   }
@@ -34,79 +35,85 @@ class _VisualizacaoState extends State<Visualizacao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("${widget.autor}"),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-            child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                    child: Text(
-                  "${widget.title}",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                )),
-                Divider(
-                  indent: 100,
-                  endIndent: 110,
-                  color: Colors.red,
-                  height: 30,
-                  thickness: 3.0,
+      appBar: AppBar(
+        title: Text("Visualização do Projeto"),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+          child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                  child: Text(
+                "${widget.title}",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              )),
+              Divider(
+                indent: 100,
+                endIndent: 110,
+                color: Colors.red,
+                height: 30,
+                thickness: 3.0,
+              ),
+              Text(
+                "${widget.fast_describe}",
+                style: TextStyle(fontSize: 20, color: Colors.black54),
+              ),
+              Divider(
+                indent: 10,
+                endIndent: 10.0,
+                thickness: 1.5,
+                color: Colors.red,
+              ),
+              Text("${widget.describe}",
+                  style: TextStyle(
+                    fontSize: 16,
+                  )),
+              Divider(
+                color: Colors.white,
+                height: 30,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: RaisedButton(
+                  onPressed: () {
+                    setState(() {
+                      launcher(widget.github);
+                    });
+                  },
+                  child: Text(
+                    "GitHub do Projeto",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  padding: EdgeInsets.fromLTRB(120, 0, 120, 0),
+                  color: Colors.black,
                 ),
-                Text(
-                  "${widget.fast_describe}",
-                  style: TextStyle(fontSize: 20, color: Colors.black54),
+              ),
+              Divider(
+                height: 30,
+              ),
+              ClipRRect(
+                child: Image.asset(
+                  "assets/python.png",
+                  height: 120,
                 ),
-                Divider(
-                  indent: 10,
-                  endIndent: 10.0,
-                  thickness: 1.5,
-                  color: Colors.red,
-                ),
-                Text("${widget.describe}",
-                    style: TextStyle(
-                      fontSize: 16,
-                    )),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: RaisedButton(
-                        onPressed: () {
-                          launcher(widget.github);
-                        },
-                        child: Text(
-                          "GitHub",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
-                        color: Colors.black,
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: RaisedButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Linkedin",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        padding: EdgeInsets.only(left: 45, right: 45),
-                        color: Colors.blue,
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              Divider(
+                color: Colors.white,
+              ),
+              Text(
+                "Ramon Paolo Maran",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-        )));
+        ),
+      )),
+    );
   }
 }

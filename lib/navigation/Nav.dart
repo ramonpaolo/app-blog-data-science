@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../routes/home/Home.dart';
 import '../routes/pub/AddConteudo.dart';
 import '../routes/user/User.dart';
+import 'package:mysql1/mysql1.dart' as mysql;
 
 class Nav extends StatefulWidget {
   Nav({Key key, this.github, this.id_user, this.email}) : super(key: key);
@@ -16,9 +17,35 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> {
   int index = 0;
 
+  Map user = {};
+
+  Future<dynamic> getFutureDados() async {
+    var settings = mysql.ConnectionSettings();
+    var conn = await mysql.MySqlConnection.connect(settings);
+    var results =
+        conn.query("select * from users where email = ?", [widget.email]);
+    await results
+        .then((value) => {
+              value.forEach((element) {
+                return user = {
+                  "id": element["id_user"],
+                  "name": element["nome"],
+                  "email": element["email"],
+                  "github": element["github"],
+                  "linkedin": element["linkedin"]
+                };
+              }),
+            })
+        .catchError((onError) => print("Errorr: ${onError}"));
+
+    conn.close();
+    return user;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    getFutureDados();
     super.initState();
   }
 
@@ -38,6 +65,7 @@ class _NavState extends State<Nav> {
                       builder: (context) => AddConteudo(
                             github: widget.github,
                             id_user: widget.id_user,
+                            email: widget.email,
                           )));
             },
             tooltip: "Adicionar Conteúdo",
@@ -48,6 +76,10 @@ class _NavState extends State<Nav> {
           ? Home()
           : Users(
               email: widget.email,
+              nome: user["name"],
+              github: user["github"],
+              linkedin: user["linkedin"],
+              id: user["id"].toString(),
             ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (i) {

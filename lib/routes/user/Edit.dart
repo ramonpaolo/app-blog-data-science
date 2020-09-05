@@ -7,7 +7,7 @@ class Edit extends StatefulWidget {
   final String email;
   final String github;
   final String linkedin;
-  final int id;
+  final String id;
 
   @override
   _EditState createState() => _EditState();
@@ -19,6 +19,7 @@ class _EditState extends State<Edit> {
   String email;
   String github;
   String linkedin;
+  bool snack = false;
 
   Future connection(id, email, github, linkedin) async {
     var settings = ConnectionSettings();
@@ -69,13 +70,13 @@ class _EditState extends State<Edit> {
                     color: Colors.white,
                   ),
                   formulario(TextInputType.emailAddress, email, "Email", email),
-                  formulario(
-                      TextInputType.url, widget.github, "Github", github),
+                  formulario(TextInputType.url, github, "Github", github),
                   formulario(TextInputType.url, linkedin, "Linkedin", linkedin),
                   RaisedButton(
                     onPressed: () {
                       if (key.currentState.validate()) {
                         connection(widget.id, email, github, linkedin);
+
                         return Navigator.pop(context);
                       }
                     },
@@ -83,7 +84,11 @@ class _EditState extends State<Edit> {
                       "Atualizar Dados",
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
-                  )
+                  ),
+                  snack == true
+                      ? Text(
+                          "Para poder ver as mudanças em seu perfil, será nessesário reiniciar o aplicativo")
+                      : Text("")
                 ],
               ),
             ),
@@ -100,6 +105,7 @@ class _EditState extends State<Edit> {
         }
       },
       onChanged: (context) {
+        snack = true;
         setState(() {
           if (variavel == github) {
             github = context;

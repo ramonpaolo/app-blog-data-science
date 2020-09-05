@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:url_launcher/url_launcher.dart';
 import './Edit.dart';
 
 class Users extends StatefulWidget {
-  Users({Key key, this.email}) : super(key: key);
+  Users({Key key, this.email, this.nome, this.github, this.id, this.linkedin})
+      : super(key: key);
   final String email;
+  final String nome;
+  final String github;
+  final String linkedin;
+  final String id;
 
   @override
   _UsersState createState() => _UsersState();
@@ -14,28 +18,14 @@ class Users extends StatefulWidget {
 class _UsersState extends State<Users> {
   Map user = {};
 
-  Future<dynamic> getFutureDados(e) async {
-    var settings = mysql.ConnectionSettings();
-    var conn = await mysql.MySqlConnection.connect(settings);
-    var results =
-        conn.query("select * from users where email = ?", [widget.email]);
-    await results
-        .then((value) => {
-              value.forEach((element) {
-                return user = {
-                  "id": element["id_user"],
-                  "name": element["nome"],
-                  "email": element["email"],
-                  "github": element["github"],
-                  "linkedin": element["linkedin"]
-                };
-              }),
-              print("Linkedin: " + user["linkedin"])
-            })
-        .catchError((onError) => print("Errorr: ${onError}"));
-
-    conn.close();
-    return user;
+  Future getDados() async {
+    return [
+      user["nome"] = widget.nome,
+      user["email"] = widget.email,
+      user["github"] = widget.github,
+      user["linkedin"] = widget.linkedin,
+      user["id"] = widget.id.toString()
+    ];
   }
 
   void launcher(url) async {
@@ -54,23 +44,28 @@ class _UsersState extends State<Users> {
       child: Container(
           child: FutureBuilder(
               initialData: "Aguarde",
-              future: getFutureDados(widget.email),
+              future: getDados(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
                       Center(
-                          child: ClipRRect(
-                        child: Image.asset(
-                          "assets/python.png",
-                          width: 90,
-                          filterQuality: FilterQuality.high,
-                          fit: BoxFit.fill,
+                        child: ClipRRect(
+                          child: Image.asset(
+                            "assets/python.png",
+                            width: 150,
+                            filterQuality: FilterQuality.high,
+                            fit: BoxFit.fill,
+                          ),
+                          borderRadius: BorderRadius.circular(105),
                         ),
-                        borderRadius: BorderRadius.circular(105),
-                      )),
+                      ),
+                      Divider(
+                        height: 40,
+                        color: Colors.white,
+                      ),
                       Text(
-                        "Nome: ${user["name"]}",
+                        "Nome: ${user["nome"]}",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 24),
                       ),
@@ -83,7 +78,7 @@ class _UsersState extends State<Users> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Tooltip(
-                              message: "Ver GitHub",
+                              message: "Abrir GitHub",
                               child: RaisedButton(
                                 onPressed: () {
                                   setState(() {
@@ -101,7 +96,7 @@ class _UsersState extends State<Users> {
                               ),
                             ),
                             Tooltip(
-                                message: "Ver Linkedin",
+                                message: "Abrir Linkedin",
                                 child: RaisedButton(
                                   onPressed: () {
                                     setState(() {

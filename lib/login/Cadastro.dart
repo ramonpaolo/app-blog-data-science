@@ -78,13 +78,6 @@ class _CadastroState extends State<Cadastro> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    //_requestTempDirectory();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: snack,
@@ -107,18 +100,25 @@ class _CadastroState extends State<Cadastro> {
                         ),
                       ),
                       formulario(false, TextInputType.emailAddress,
-                          "Digite seu email:", email),
+                          "Digite seu email:", email, ""),
+                      formulario(false, TextInputType.name, "Digite seu nome:",
+                          nome, ""),
                       formulario(
-                          false, TextInputType.name, "Digite seu nome:", nome),
-                      formulario(false, TextInputType.url,
-                          "Digite o link do github (opcional):", github),
-                      formulario(false, TextInputType.url,
-                          "Digite seu linkedin (opcional):", linkedin),
+                          false,
+                          TextInputType.url,
+                          "Digite o link do github (opcional):",
+                          github,
+                          "https://github.com/"),
+                      formulario(
+                          false,
+                          TextInputType.url,
+                          "Digite seu linkedin (opcional):",
+                          linkedin,
+                          "https://linkedin/in/"),
                       formulario(true, TextInputType.visiblePassword,
-                          "Digite aqui sua senha:", senha),
+                          "Digite aqui sua senha:", senha, ""),
                       RaisedButton(
                         onPressed: () async {
-                          //_requestTempDirectory();
                           if (form.currentState.validate()) {
                             await connection(
                                 nome, email, senha, github, linkedin);
@@ -147,10 +147,11 @@ class _CadastroState extends State<Cadastro> {
         ));
   }
 
-  Widget formulario(
-      bool password, TextInputType tipo, String label, String estado) {
+  Widget formulario(bool password, TextInputType tipo, String label,
+      String estado, String valorInicial) {
     return TextFormField(
       obscureText: password,
+      initialValue: valorInicial,
       validator: (value) {
         if (value.isEmpty) {
           return "Está vazio";
