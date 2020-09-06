@@ -23,7 +23,7 @@ class _AddConteudoState extends State<AddConteudo> {
     var conn = await MySqlConnection.connect(settings);
     conn.query(
         "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null,?,?,?,?,?)",
-        [titulo, github, rapida_descricao, descricao, id_user]);
+        [titulo, github, rapida_descricao, descricao, widget.id_user]);
     Navigator.of(context).pop();
     Navigator.pushReplacement(
         context,

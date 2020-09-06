@@ -128,6 +128,7 @@ class _UsersState extends State<Users> {
                                           linkedin: user["linkedin"],
                                           email: user["email"],
                                           id: user["id"],
+                                          nome: user["nome"],
                                         )));
                           },
                           icon: Icon(
@@ -143,7 +144,7 @@ class _UsersState extends State<Users> {
                     ],
                   );
                 } else {
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 }
               })),
     ));

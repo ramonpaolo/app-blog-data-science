@@ -63,8 +63,8 @@ class _NavState extends State<Nav> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => AddConteudo(
-                            github: widget.github,
-                            id_user: widget.id_user,
+                            github: user["github"],
+                            id_user: user["id"],
                             email: widget.email,
                           )));
             },
@@ -85,7 +85,6 @@ class _NavState extends State<Nav> {
           onTap: (i) {
             setState(() {
               index = i;
-              print(widget.email);
             });
           },
           currentIndex: index,

@@ -12,11 +12,15 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Map projeto = {};
   List projetos = [];
+  List projetosPerson = [];
+  Map projetoPerson = {};
   int valor = 0;
   int limite = 15;
 
   Future<dynamic> getFutureDados() async {
-    var settings = ConnectionSettings();
+    var settings = ConnectionSettings(
+      
+    );
     var conn = await MySqlConnection.connect(settings);
     var results = conn.query("select * from conteudo");
     await results
@@ -31,15 +35,26 @@ class _HomeState extends State<Home> {
                     "fast_describe": element["rapida_descricao"].toString(),
                     "describe": element["descricao"].toString(),
                     "github": element["github"].toString(),
-                    "criacao": element["criacao"].toString()
+                    "criacao": element["criacao"].toString(),
+                    "id_user": element["id_user"].toString()
                   };
                   projetos.add(projeto);
                 }
               })
             })
         .catchError((onError) => print("Errorr: ${onError}"));
+    valor = 0;
+    projetos.forEach((element) {
+      print(element);
+      var resultsPerson = conn.query("select * from users where id_user = ?", [
+        element["id_user"]
+      ]).then((value) => value.forEach((element) {
+            projetoPerson = {"nome": element["nome"]};
+            projetosPerson.add(projetoPerson);
+          }));
+    });
 
-    conn.close();
+    // conn.close();
     return projetos;
   }
 
@@ -88,6 +103,7 @@ class _HomeState extends State<Home> {
                                         ["fast_describe"],
                                     github: projetos[index]["github"],
                                     describe: projetos[index]["describe"],
+                                    autor: projetosPerson[index]["nome"],
                                   ))),
                     )));
                   });

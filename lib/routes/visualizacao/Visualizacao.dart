@@ -107,7 +107,7 @@ class _VisualizacaoState extends State<Visualizacao> {
                 color: Colors.white,
               ),
               Text(
-                "Ramon Paolo Maran",
+                "${widget.autor}",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
