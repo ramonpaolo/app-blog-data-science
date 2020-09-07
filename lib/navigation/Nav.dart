@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../routes/home/Home.dart';
 import '../routes/pub/AddConteudo.dart';
 import '../routes/user/User.dart';
+import '../routes/chat/Chat.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 
 class Nav extends StatefulWidget {
@@ -16,11 +17,16 @@ class Nav extends StatefulWidget {
 
 class _NavState extends State<Nav> {
   int index = 0;
-
   Map user = {};
 
   Future<dynamic> getFutureDados() async {
-    var settings = mysql.ConnectionSettings();
+    var settings = mysql.ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await mysql.MySqlConnection.connect(settings);
     var results =
         conn.query("select * from users where email = ?", [widget.email]);
@@ -36,7 +42,7 @@ class _NavState extends State<Nav> {
                 };
               }),
             })
-        .catchError((onError) => print("Errorr: ${onError}"));
+        .catchError((onError) => print("'Nav.dart': $onError"));
 
     conn.close();
     return user;
@@ -74,13 +80,21 @@ class _NavState extends State<Nav> {
       ),
       body: index == 0
           ? Home()
-          : Users(
-              email: widget.email,
-              nome: user["name"],
-              github: user["github"],
-              linkedin: user["linkedin"],
-              id: user["id"].toString(),
-            ),
+          : index == 1
+              ? Chat()
+              : index == 2
+                  ? Users(
+                      email: widget.email,
+                      nome: user["name"],
+                      github: user["github"],
+                      linkedin: user["linkedin"],
+                      id: user["id"].toString(),
+                    )
+                  : Center(
+                      child: Text(
+                      "ERROR",
+                      style: TextStyle(fontSize: 24),
+                    )),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (i) {
             setState(() {
@@ -91,6 +105,8 @@ class _NavState extends State<Nav> {
           items: [
             BottomNavigationBarItem(
                 icon: Icon(Icons.home), title: Text("Home")),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.mail_outline), title: Text("Mensagem")),
             BottomNavigationBarItem(
                 icon: Icon(Icons.portrait), title: Text("Perfil"))
           ]),

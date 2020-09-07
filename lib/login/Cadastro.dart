@@ -1,6 +1,7 @@
 import '../navigation/Nav.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
 
 class Cadastro extends StatefulWidget {
@@ -35,9 +36,43 @@ var j;
   int valores;
   bool user = false;
 
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ["email", "https://www.googleapis.com/auth/cloud-platform"]);
+
+  Future cadastroGoogle() async {
+    try {
+      await _googleSignIn.signIn();
+      senha = DateTime.now().toString();
+      await conexaoGoogle();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future conexaoGoogle() async {
+    await connection(_googleSignIn.currentUser.displayName,
+        _googleSignIn.currentUser.email, senha, github, linkedin);
+    if (valores == 0) {
+      snack.currentState.showSnackBar(SnackBar(
+          content:
+              Text("Guarde sua senha: $senha e espere o login automatico")));
+      Future.delayed(
+          Duration(seconds: 4), () => tela(_googleSignIn.currentUser.email));
+    } else {
+      snack.currentState.showSnackBar(
+          SnackBar(content: Text("Esse Email já está sendo utilizado")));
+    }
+  }
+
   Future connection(nome, email, senha, github, linkedin) async {
     valores = 0;
-    var settings = ConnectionSettings();
+    var settings = ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await MySqlConnection.connect(settings);
     var results =
         await conn.query("select email from users where email = ?", [email]);
@@ -60,7 +95,7 @@ var j;
     }
   }
 
-  void tela() async {
+  void tela(email) async {
     Navigator.of(context).popUntil((route) => route.isFirst);
 
     Navigator.pushReplacement(
@@ -117,7 +152,7 @@ var j;
                             await connection(
                                 nome, email, senha, github, linkedin);
                             if (user) {
-                              tela();
+                              tela(email);
                             } else {
                               snack.currentState.showSnackBar(
                                   SnackBar(content: Text("Email já em uso")));
@@ -134,6 +169,10 @@ var j;
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
+                      RaisedButton(
+                        onPressed: cadastroGoogle,
+                        child: Text("Cadastro com Google"),
+                      )
                     ],
                   ),
                 ),

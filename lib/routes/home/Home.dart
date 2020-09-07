@@ -19,7 +19,11 @@ class _HomeState extends State<Home> {
 
   Future<dynamic> getFutureDados() async {
     var settings = ConnectionSettings(
-      
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
     );
     var conn = await MySqlConnection.connect(settings);
     var results = conn.query("select * from conteudo");

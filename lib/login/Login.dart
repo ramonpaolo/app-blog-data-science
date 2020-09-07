@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import './Cadastro.dart';
 import '../navigation/Nav.dart';
-import 'package:mysql1/mysql1.dart';
+import 'package:mysql1/mysql1.dart' as mysql;
+import 'package:google_sign_in/google_sign_in.dart';
 
 //https://sourceforge.net/projects/linux-4-flutter-devs/
 
@@ -11,38 +12,80 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ["email", "https://www.googleapis.com/auth/cloud-platform"]);
   final snack = GlobalKey<ScaffoldState>();
 
   String email;
   String senha;
   int valor;
   Map dados;
+  bool login = false;
+
+  Future loginGoogle() async {
+    try {
+      await _googleSignIn.signIn();
+      login = true;
+      await connect(_googleSignIn.currentUser.email, senha);
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future connect(email, senha) async {
-    var settings = ConnectionSettings();
-    var conn = await MySqlConnection.connect(settings);
-    conn.query("select * from users where email = ? and senha = ?",
-        [email, senha]).then((value) {
-      if (value.length == 0) {
-        mostrarSnack();
-        //print("Usuário não cadastrado");
-      } else {
-        value.forEach((element) {
-          dados = {"github": element["github"], "id": element["id_user"]};
-        });
-
-        print("Usuário cadastrado");
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Nav(
-                github: dados["github"],
-                id_user: dados["id"],
-                email: email,
-              ),
-            ));
-      }
-    });
+    var settings = mysql.ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
+    if (login) {
+      var conn = await mysql.MySqlConnection.connect(settings);
+      conn.query("select * from users where email = ?",
+          [_googleSignIn.currentUser.email]).then((value) {
+        if (value.length == 0) {
+          mostrarSnack();
+          print("'Login.dart': Usuário não cadastrado pelo google");
+        } else {
+          value.forEach((element) {
+            dados = {"github": element["github"], "id": element["id_user"]};
+          });
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Nav(
+                  github: dados["github"],
+                  id_user: dados["id"],
+                  email: _googleSignIn.currentUser.email,
+                ),
+              ));
+        }
+      });
+    } else {
+      var conn = await mysql.MySqlConnection.connect(settings);
+      conn.query("select * from users where email = ? and senha = ?",
+          [email, senha]).then((value) {
+        if (value.length == 0) {
+          mostrarSnack();
+          print("'Login.dart': Usuário não cadastrado");
+        } else {
+          value.forEach((element) {
+            dados = {"github": element["github"], "id": element["id_user"]};
+          });
+          print("'login.dart': Usuário cadastrado");
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Nav(
+                  github: dados["github"],
+                  id_user: dados["id"],
+                  email: email,
+                ),
+              ));
+        }
+      });
+    }
   }
 
   void mostrarSnack() async {
@@ -64,6 +107,9 @@ class _LoginState extends State<Login> {
               child: Container(
                 child: Column(
                   children: [
+                    Divider(
+                      height: 30,
+                    ),
                     Image.asset(
                       "assets/python.png",
                       width: 150,
@@ -71,7 +117,7 @@ class _LoginState extends State<Login> {
                       fit: BoxFit.fill,
                     ),
                     Divider(
-                      height: 100,
+                      height: 50,
                       color: Colors.white,
                     ),
                     TextField(
@@ -79,7 +125,7 @@ class _LoginState extends State<Login> {
                       onChanged: (context) {
                         setState(() {
                           email = context;
-                          print("Email: $email");
+                          print("'Login.dart': Email: $email");
                         });
                       },
                       decoration:
@@ -90,36 +136,67 @@ class _LoginState extends State<Login> {
                       onChanged: (context) {
                         setState(() {
                           senha = context;
-                          print("Senha: $senha");
+                          print("'Login.dart': Senha: $senha");
                         });
                       },
                       keyboardType: TextInputType.visiblePassword,
                       decoration:
                           InputDecoration(labelText: "Digite sua senha: "),
                     ),
+                    Divider(
+                      color: Colors.white,
+                    ),
                     RaisedButton(
-                      onPressed: () async {
-                        await connect(email, senha);
-                      },
-                      child: Text(
-                        "Login",
-                        style: TextStyle(color: Colors.white),
+                        onPressed: () async {
+                          await connect(email, senha);
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Login",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
+                            ])),
+                    RaisedButton(
+                      onPressed: loginGoogle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.network(
+                            "https://foroalfa.org/imagenes/ilustraciones/g-1.jpg",
+                            height: 40,
+                          ),
+                          Text(
+                            "Login com Google",
+                          ),
+                        ],
                       ),
+                      color: Colors.white,
+                      colorBrightness: Brightness.light,
                     ),
                     Divider(),
-                    Text("Caso não tenha um cadastro"),
+                    Text(
+                      "Caso não tenha um cadastro",
+                      style: TextStyle(fontSize: 16),
+                    ),
                     RaisedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Cadastro()));
-                      },
-                      child: Text(
-                        "Cadastrar",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Cadastro()));
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Cadastrar",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
+                            ]))
                   ],
                 ),
               ),
