@@ -33,13 +33,7 @@ class _LoginState extends State<Login> {
   }
 
   Future connect(email, senha) async {
-    var settings = mysql.ConnectionSettings(
-      host: "mysql669.umbler.com",
-      user: "ramon_paolo",
-      password: "familiAMaram12.",
-      db: "data-science",
-      port: 41890,
-    );
+    var settings = mysql.ConnectionSettings();
     if (login) {
       var conn = await mysql.MySqlConnection.connect(settings);
       conn.query("select * from users where email = ?",
