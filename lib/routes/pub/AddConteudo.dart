@@ -35,6 +35,14 @@ class _AddConteudoState extends State<AddConteudo> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print("----------------- ADD-CONTEUDO.DART -----------------");
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: snack,

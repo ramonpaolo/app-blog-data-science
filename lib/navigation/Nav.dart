@@ -45,6 +45,7 @@ class _NavState extends State<Nav> {
   @override
   void initState() {
     // TODO: implement initState
+    print("----------------- NAV.DART -----------------");
     getFutureDados();
     super.initState();
   }
@@ -75,7 +76,9 @@ class _NavState extends State<Nav> {
       body: index == 0
           ? Home()
           : index == 1
-              ? Chat()
+              ? Chat(
+                  id_user: user["id"],
+                )
               : index == 2
                   ? Users(
                       email: widget.email,
@@ -100,7 +103,7 @@ class _NavState extends State<Nav> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.home), title: Text("Home")),
             BottomNavigationBarItem(
-                icon: Icon(Icons.mail_outline), title: Text("Mensagem")),
+                icon: Icon(Icons.message), title: Text("Chat")),
             BottomNavigationBarItem(
                 icon: Icon(Icons.portrait), title: Text("Perfil"))
           ]),

@@ -44,6 +44,8 @@ class _EditState extends State<Edit> {
     github = widget.github;
     linkedin = widget.linkedin;
     nome = widget.nome;
+    print("----------------- EDIT.DART -----------------");
+
     super.initState();
   }
 

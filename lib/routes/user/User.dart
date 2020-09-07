@@ -37,6 +37,14 @@ class _UsersState extends State<Users> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print("----------------- USER.DART -----------------");
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Padding(

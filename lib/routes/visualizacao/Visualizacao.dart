@@ -33,6 +33,13 @@ class _VisualizacaoState extends State<Visualizacao> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print("----------------- VISUALIZACAO.DART -----------------");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
