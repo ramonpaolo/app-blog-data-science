@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "879874762237",
+    "firebase_url": "https://blog-data-science.firebaseio.com",
+    "project_id": "blog-data-science",
+    "storage_bucket": "blog-data-science.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879874762237:android:a794ed40256b5531672594",
+        "android_client_info": {
+          "package_name": "com.example.blog_data_science"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "879874762237-892drtkhbmg9jo8t1ifjvdg942q4jrb8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blog_data_science",
+            "certificate_hash": "b1d46e8e467f25d3eb371292834ad0a9a8382046"
+          }
+        },
+        {
+          "client_id": "879874762237-mf45hq3ha6nvbk246q4msf13h4m57gsj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFKrAubriIzoRlb7NXGDXMLOcDqsdqXkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879874762237-mf45hq3ha6nvbk246q4msf13h4m57gsj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
