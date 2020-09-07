@@ -88,6 +88,13 @@ class _LoginState extends State<Login> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print("----------------- LOGIN.DART -----------------");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: snack,
@@ -158,12 +165,13 @@ class _LoginState extends State<Login> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.network(
-                            "https://foroalfa.org/imagenes/ilustraciones/g-1.jpg",
+                          Image.asset(
+                            "assets/google.jpg",
                             height: 40,
                           ),
                           Text(
                             "Login com Google",
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -173,7 +181,7 @@ class _LoginState extends State<Login> {
                     Divider(),
                     Text(
                       "Caso não tenha um cadastro",
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 18),
                     ),
                     RaisedButton(
                         onPressed: () {

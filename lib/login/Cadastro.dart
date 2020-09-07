@@ -1,6 +1,6 @@
 import '../navigation/Nav.dart';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
+import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
 
@@ -53,11 +53,10 @@ var j;
     await connection(_googleSignIn.currentUser.displayName,
         _googleSignIn.currentUser.email, senha, github, linkedin);
     if (valores == 0) {
-      snack.currentState.showSnackBar(SnackBar(
-          content:
-              Text("Guarde sua senha: $senha e espere o login automatico")));
+      snack.currentState.showSnackBar(
+          SnackBar(content: Text("Cadastro realizado com sucesso")));
       Future.delayed(
-          Duration(seconds: 4), () => tela(_googleSignIn.currentUser.email));
+          Duration(seconds: 2), () => tela(_googleSignIn.currentUser.email));
     } else {
       snack.currentState.showSnackBar(
           SnackBar(content: Text("Esse Email já está sendo utilizado")));
@@ -66,8 +65,8 @@ var j;
 
   Future connection(nome, email, senha, github, linkedin) async {
     valores = 0;
-    var settings = ConnectionSettings();
-    var conn = await MySqlConnection.connect(settings);
+    var settings = mysql.ConnectionSettings();
+    var conn = await mysql.MySqlConnection.connect(settings);
     var results =
         await conn.query("select email from users where email = ?", [email]);
     results.forEach((element) {
@@ -98,6 +97,14 @@ var j;
             builder: (context) => Nav(
                   email: email,
                 )));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print("----------------- CADASTRO.DART -----------------");
+
+    super.initState();
   }
 
   @override
@@ -141,32 +148,51 @@ var j;
                       formulario(true, TextInputType.visiblePassword,
                           "Digite aqui sua senha:", senha, ""),
                       RaisedButton(
-                        onPressed: () async {
-                          if (form.currentState.validate()) {
-                            await connection(
-                                nome, email, senha, github, linkedin);
-                            if (user) {
-                              tela(email);
+                          onPressed: () async {
+                            if (form.currentState.validate()) {
+                              await connection(
+                                  nome, email, senha, github, linkedin);
+                              if (user) {
+                                tela(email);
+                              } else {
+                                snack.currentState.showSnackBar(
+                                    SnackBar(content: Text("Email já em uso")));
+                              }
                             } else {
-                              snack.currentState.showSnackBar(
-                                  SnackBar(content: Text("Email já em uso")));
+                              print("Formulário com dados faltando.");
+                              snack.currentState.showSnackBar(SnackBar(
+                                  content:
+                                      Text("Formulário com dados faltando")));
                             }
-                          } else {
-                            print("Formulário com dados faltando.");
-                            snack.currentState.showSnackBar(SnackBar(
-                                content:
-                                    Text("Formulário com dados faltando")));
-                          }
-                        },
-                        child: Text(
-                          "Cadastrar",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Cadastrar",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
+                            ],
+                          )),
+                      Text("Ou"),
                       RaisedButton(
                         onPressed: cadastroGoogle,
-                        child: Text("Cadastro com Google"),
-                      )
+                        color: Colors.white,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/google.jpg",
+                                width: 40,
+                              ),
+                              Text(
+                                "Cadastrar com o Google",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 16),
+                              ),
+                            ]),
+                      ),
                     ],
                   ),
                 ),
