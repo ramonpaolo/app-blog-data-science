@@ -23,13 +23,7 @@ class _AddConteudoState extends State<AddConteudo> {
 
   void connection(titulo, github, rapida_descricao, descricao, id_user) async {
     print("Funcao $github");
-    var settings = ConnectionSettings(
-      host: "mysql669.umbler.com",
-      user: "ramon_paolo",
-      password: "familiAMaram12.",
-      db: "data-science",
-      port: 41890,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     conn.query(
         "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null,?,?,?,?,?)",

@@ -18,13 +18,7 @@ class _CadastroState extends State<Cadastro> {
   String github = "https://github.com/";
   String linkedin = "https://linkedin/in/";
   int contasExistentes;
-  var settings = mysql.ConnectionSettings(
-    host: "mysql669.umbler.com",
-    user: "ramon_paolo",
-    password: "familiAMaram12.",
-    db: "data-science",
-    port: 41890,
-  );
+  var settings = mysql.ConnectionSettings();
   GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: ["email", "https://www.googleapis.com/auth/cloud-platform"]);
 

@@ -42,13 +42,7 @@ class _VisualizacaoState extends State<Visualizacao> {
   }
 
   Future buscarUser() async {
-    var settings = ConnectionSettings(
-      host: "mysql669.umbler.com",
-      user: "ramon_paolo",
-      password: "familiAMaram12.",
-      db: "data-science",
-      port: 41890,
-    );
+    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     var results = await conn
         .query("select * from users where id_user = ?", [widget.id_user]);
