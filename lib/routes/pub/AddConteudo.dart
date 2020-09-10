@@ -16,14 +16,25 @@ class _AddConteudoState extends State<AddConteudo> {
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
 
-  String titulo, rapida_descricao, descricao, github;
+  String titulo;
+  String rapida_descricao;
+  String descricao;
+  String github;
 
   void connection(titulo, github, rapida_descricao, descricao, id_user) async {
-    var settings = ConnectionSettings();
+    print("Funcao $github");
+    var settings = ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await MySqlConnection.connect(settings);
     conn.query(
         "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null,?,?,?,?,?)",
         [titulo, github, rapida_descricao, descricao, widget.id_user]);
+    print("Query $github");
     Navigator.of(context).pop();
     Navigator.pushReplacement(
         context,
@@ -38,7 +49,6 @@ class _AddConteudoState extends State<AddConteudo> {
   void initState() {
     // TODO: implement initState
     print("----------------- ADD-CONTEUDO.DART -----------------");
-
     super.initState();
   }
 
@@ -68,14 +78,25 @@ class _AddConteudoState extends State<AddConteudo> {
                     "Título não informado", titulo),
                 formulario(TextInputType.text, "Uma breve descrição",
                     "Breve descrição não informado", rapida_descricao),
-                formulario(TextInputType.text, "Descrição",
-                    "Descrição não informada", descricao),
+                TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  minLines: 5,
+                  maxLines: 8,
+                  decoration: InputDecoration(labelText: "Descrição"),
+                  onChanged: (value) {
+                    setState(() {
+                      descricao = value;
+                      print(descricao);
+                    });
+                  },
+                ),
                 Tooltip(
                   message: "Fazer publicação desse artigo",
                   child: RaisedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (form.currentState.validate()) {
-                          connection(titulo, github, rapida_descricao,
+                          print("Form: $github");
+                          await connection(titulo, github, rapida_descricao,
                               descricao, widget.id_user);
                         } else {
                           snack.currentState.showSnackBar(SnackBar(
@@ -111,9 +132,6 @@ class _AddConteudoState extends State<AddConteudo> {
           } else if (text == rapida_descricao) {
             rapida_descricao = context;
             print("Rápida descrição: $rapida_descricao");
-          } else if (text == descricao) {
-            descricao = context;
-            print("Descrição: $descricao");
           } else if (text == github) {
             github = context;
             print("Github: $github");

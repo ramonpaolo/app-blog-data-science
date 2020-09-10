@@ -10,32 +10,21 @@ class Cadastro extends StatefulWidget {
 }
 
 class _CadastroState extends State<Cadastro> {
-/*  
-import 'package:flutter/services.dart' show rootBundle;
-import 'dart:convert';
-var j;
-  Future _requestTempDirectory() async {
-    await rootBundle.loadString("assets/db.json").then((value) {
-      dados = {"user": value};
-    });
-    j = await json.encode(dados);
-    //dados = {"user": j};
-    print(await dados["user"]["user"]);
-    //print(dados["user"]);
-  }*/
-
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
-
-  Map jsonData;
   String nome;
   String email;
   String senha;
   String github = "https://github.com/";
   String linkedin = "https://linkedin/in/";
-  int valores;
-  bool user = false;
-
+  int contasExistentes;
+  var settings = mysql.ConnectionSettings(
+    host: "mysql669.umbler.com",
+    user: "ramon_paolo",
+    password: "familiAMaram12.",
+    db: "data-science",
+    port: 41890,
+  );
   GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: ["email", "https://www.googleapis.com/auth/cloud-platform"]);
 
@@ -43,54 +32,36 @@ var j;
     try {
       await _googleSignIn.signIn();
       senha = DateTime.now().toString();
-      await conexaoGoogle();
+      await connection(_googleSignIn.currentUser.displayName,
+          _googleSignIn.currentUser.email, senha, github, linkedin);
     } catch (e) {
       print(e);
     }
   }
 
-  Future conexaoGoogle() async {
-    await connection(_googleSignIn.currentUser.displayName,
-        _googleSignIn.currentUser.email, senha, github, linkedin);
-    if (valores == 0) {
-      snack.currentState.showSnackBar(
-          SnackBar(content: Text("Cadastro realizado com sucesso")));
-      Future.delayed(
-          Duration(seconds: 2), () => tela(_googleSignIn.currentUser.email));
-    } else {
-      snack.currentState.showSnackBar(
-          SnackBar(content: Text("Esse Email já está sendo utilizado")));
-    }
-  }
-
   Future connection(nome, email, senha, github, linkedin) async {
-    valores = 0;
-    var settings = mysql.ConnectionSettings();
+    contasExistentes = 0;
     var conn = await mysql.MySqlConnection.connect(settings);
     var results =
         await conn.query("select email from users where email = ?", [email]);
     results.forEach((element) {
-      if (mounted)
-        setState(() {
-          valores++;
-        });
+      contasExistentes++;
     });
-    print(valores);
-    if (valores == 0) {
+    if (contasExistentes == 0) {
       conn.query(
           "INSERT INTO users (id_user, nome, email, senha, github, linkedin) VALUES (null, ?,?,?,?,?)",
           [nome, email, senha, github, linkedin]);
-
-      user = true;
-    } else if (valores == 1) {
-      user = false;
-      print("Já tem cadastrado: " + valores.toString());
+    } else {
+      print("'Cadastro.dart': Já tem usuário cadastrado com esse Email");
     }
   }
 
-  void tela(email) async {
-    Navigator.of(context).popUntil((route) => route.isFirst);
+  void snackbar(text) {
+    snack.currentState.showSnackBar(SnackBar(content: Text(text)));
+  }
 
+  void nextTela(email) async {
+    Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -103,7 +74,6 @@ var j;
   void initState() {
     // TODO: implement initState
     print("----------------- CADASTRO.DART -----------------");
-
     super.initState();
   }
 
@@ -112,7 +82,7 @@ var j;
     return Scaffold(
         key: snack,
         appBar: AppBar(
-          title: Text("Data-Science"),
+          title: Text("Data Science"),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -152,17 +122,15 @@ var j;
                             if (form.currentState.validate()) {
                               await connection(
                                   nome, email, senha, github, linkedin);
-                              if (user) {
-                                tela(email);
+                              if (contasExistentes == 0) {
+                                nextTela(email);
                               } else {
-                                snack.currentState.showSnackBar(
-                                    SnackBar(content: Text("Email já em uso")));
+                                snackbar("Email já está sendo utilizado");
                               }
                             } else {
-                              print("Formulário com dados faltando.");
-                              snack.currentState.showSnackBar(SnackBar(
-                                  content:
-                                      Text("Formulário com dados faltando")));
+                              print(
+                                  "'Cadastro.dart': Formulário com dados faltando.");
+                              snackbar("Formulário com dados faltando");
                             }
                           },
                           child: Row(
@@ -177,7 +145,18 @@ var j;
                           )),
                       Text("Ou"),
                       RaisedButton(
-                        onPressed: cadastroGoogle,
+                        onPressed: () async {
+                          await cadastroGoogle();
+                          if (contasExistentes == 0) {
+                            snackbar("Cadastro Realizado com sucesso");
+                            await Future.delayed(
+                                Duration(seconds: 2),
+                                () =>
+                                    nextTela(_googleSignIn.currentUser.email));
+                          } else {
+                            snackbar("Esse Email já está sendo utilizado");
+                          }
+                        },
                         color: Colors.white,
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -200,35 +179,35 @@ var j;
         ));
   }
 
-  Widget formulario(bool password, TextInputType tipo, String label,
-      String estado, String valorInicial) {
+  Widget formulario(bool password, TextInputType type, String label,
+      String state, String valueInit) {
     return TextFormField(
       obscureText: password,
-      initialValue: valorInicial,
+      initialValue: valueInit,
       validator: (value) {
         if (value.isEmpty) {
           return "Está vazio";
         }
       },
-      keyboardType: tipo,
+      keyboardType: type,
       decoration: InputDecoration(labelText: label),
       onChanged: (context) {
         setState(() {
-          if (estado == email) {
+          if (state == email) {
             email = context;
-            print(email);
-          } else if (estado == nome) {
+            print("'Cadastro.dart': Email: $email");
+          } else if (state == nome) {
             nome = context;
-            print(nome);
-          } else if (estado == senha) {
+            print("'Cadastro.dart': Nome: $nome");
+          } else if (state == senha) {
             senha = context;
-            print(senha);
-          } else if (estado == github) {
+            print("'Cadastro.dart': Senha: $senha");
+          } else if (state == github) {
             github = context;
-            print(github);
+            print("'Cadastro.dart': Github: $github");
           } else {
             linkedin = context;
-            print(linkedin);
+            print("'Cadastro.dart': Linkedin $linkedin");
           }
         });
       },

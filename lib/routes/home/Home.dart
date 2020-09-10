@@ -22,7 +22,13 @@ class _HomeState extends State<Home> {
   final _streamController = StreamController();
 
   Future<dynamic> getFutureDados() async {
-    var settings = ConnectionSettings();
+    var settings = ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await MySqlConnection.connect(settings);
     var results = conn.query("select * from conteudo");
     await results
@@ -124,6 +130,7 @@ class _HomeState extends State<Home> {
                               MaterialPageRoute(
                                   builder: (context) => Visualizacao(
                                         id_post: projetos[index]["id"],
+                                        id_user: projetos[index]["id_user"],
                                         title: projetos[index]["title"],
                                         fast_describe: projetos[index]
                                             ["fast_describe"],

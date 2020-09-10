@@ -20,7 +20,13 @@ class _NavState extends State<Nav> {
   Map user = {};
 
   Future<dynamic> getFutureDados() async {
-    var settings = mysql.ConnectionSettings();
+    var settings = mysql.ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     var conn = await mysql.MySqlConnection.connect(settings);
     var results =
         conn.query("select * from users where email = ?", [widget.email]);
@@ -32,7 +38,8 @@ class _NavState extends State<Nav> {
                   "name": element["nome"],
                   "email": element["email"],
                   "github": element["github"],
-                  "linkedin": element["linkedin"]
+                  "linkedin": element["linkedin"],
+                  "descricao": element["descricao"]
                 };
               }),
             })
@@ -86,6 +93,7 @@ class _NavState extends State<Nav> {
                       github: user["github"],
                       linkedin: user["linkedin"],
                       id: user["id"].toString(),
+                      descricao: user["descricao"],
                     )
                   : Center(
                       child: Text(

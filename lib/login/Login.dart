@@ -28,12 +28,22 @@ class _LoginState extends State<Login> {
       login = true;
       await connect(_googleSignIn.currentUser.email, senha);
     } catch (e) {
+      setState(() {
+        email = "";
+        senha = "";
+      });
       print(e);
     }
   }
 
   Future connect(email, senha) async {
-    var settings = mysql.ConnectionSettings();
+    var settings = mysql.ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
     if (login) {
       var conn = await mysql.MySqlConnection.connect(settings);
       conn.query("select * from users where email = ?",
@@ -149,7 +159,11 @@ class _LoginState extends State<Login> {
                     ),
                     RaisedButton(
                         onPressed: () async {
-                          await connect(email, senha);
+                          setState(() async {
+                            await connect(email, senha);
+                            email = "";
+                            senha = "";
+                          });
                         },
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,

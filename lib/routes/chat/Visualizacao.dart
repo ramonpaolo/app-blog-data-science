@@ -20,10 +20,15 @@ class _VisualizacaoState extends State<Visualizacao> {
   Map mensagem;
   List mensagens = [];
 
-  var config = mysql.ConnectionSettings();
-
+  var settings = mysql.ConnectionSettings(
+    host: "mysql669.umbler.com",
+    user: "ramon_paolo",
+    password: "familiAMaram12.",
+    db: "data-science",
+    port: 41890,
+  );
   Future getMensagens() async {
-    var conn = await mysql.MySqlConnection.connect(config);
+    var conn = await mysql.MySqlConnection.connect(settings);
     mensagens = [];
     try {
       var results = await conn
@@ -54,7 +59,7 @@ class _VisualizacaoState extends State<Visualizacao> {
   }
 
   Future addMensagens(content, id_user) async {
-    var conn = await mysql.MySqlConnection.connect(config);
+    var conn = await mysql.MySqlConnection.connect(settings);
     try {
       var results = await conn.query(
           "insert into mensagens values (null, ?, ?)", [content, id_user]);

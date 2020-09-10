@@ -3,13 +3,21 @@ import 'package:url_launcher/url_launcher.dart';
 import './Edit.dart';
 
 class Users extends StatefulWidget {
-  Users({Key key, this.email, this.nome, this.github, this.id, this.linkedin})
+  Users(
+      {Key key,
+      this.email,
+      this.nome,
+      this.github,
+      this.id,
+      this.linkedin,
+      this.descricao})
       : super(key: key);
   final String email;
   final String nome;
   final String github;
   final String linkedin;
   final String id;
+  final String descricao;
 
   @override
   _UsersState createState() => _UsersState();
@@ -24,6 +32,7 @@ class _UsersState extends State<Users> {
       user["email"] = widget.email,
       user["github"] = widget.github,
       user["linkedin"] = widget.linkedin,
+      user["descricao"] = widget.descricao,
       user["id"] = widget.id.toString()
     ];
   }
@@ -40,7 +49,6 @@ class _UsersState extends State<Users> {
   void initState() {
     // TODO: implement initState
     print("----------------- USER.DART -----------------");
-
     super.initState();
   }
 
@@ -124,6 +132,22 @@ class _UsersState extends State<Users> {
                           ],
                         ),
                       ),
+                      Divider(
+                        color: Colors.white,
+                        height: 20,
+                      ),
+                      Text(
+                        "Sobre mim: ",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text("${user["descricao"]}",
+                          style: TextStyle(
+                              fontSize: 16, fontStyle: FontStyle.italic)),
+                      Divider(
+                        color: Colors.white,
+                        height: 20,
+                      ),
                       Tooltip(
                         message: "Mudar informações",
                         child: RaisedButton.icon(
@@ -137,6 +161,7 @@ class _UsersState extends State<Users> {
                                           email: user["email"],
                                           id: user["id"],
                                           nome: user["nome"],
+                                          descricao: user["descricao"],
                                         )));
                           },
                           icon: Icon(

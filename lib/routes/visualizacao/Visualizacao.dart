@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import './Perfil.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mysql1/mysql1.dart';
 
 class Visualizacao extends StatefulWidget {
   Visualizacao(
@@ -9,6 +11,7 @@ class Visualizacao extends StatefulWidget {
       this.id_post,
       this.fast_describe,
       this.describe,
+      this.id_user,
       this.github})
       : super(key: key);
   final String title;
@@ -17,31 +20,63 @@ class Visualizacao extends StatefulWidget {
   final String describe;
   final String github;
   final String id_post;
+  final String id_user;
 
   @override
   _VisualizacaoState createState() => _VisualizacaoState();
 }
 
 class _VisualizacaoState extends State<Visualizacao> {
+  final snack = GlobalKey<ScaffoldState>();
+  Map user;
+
   void launcher(url) async {
     if (await canLaunch("${url}")) {
       launch(url);
     } else {
       print("Deu erro no link: $url");
-      throw "Operação não pode ser realizada";
+      snack.currentState
+          .showSnackBar(SnackBar(content: Text("Link '$url' com erro")));
+      //throw "Operação não pode ser realizada";
     }
+  }
+
+  Future buscarUser() async {
+    var settings = ConnectionSettings(
+      host: "mysql669.umbler.com",
+      user: "ramon_paolo",
+      password: "familiAMaram12.",
+      db: "data-science",
+      port: 41890,
+    );
+    var conn = await MySqlConnection.connect(settings);
+    var results = await conn
+        .query("select * from users where id_user = ?", [widget.id_user]);
+    results.forEach((element) {
+      return user = {
+        "nome": element["nome"],
+        "email": element["email"],
+        "github": element["github"],
+        "linkedin": element["linkedin"],
+      };
+    });
+
+    conn.close();
+    return user;
   }
 
   @override
   void initState() {
     // TODO: implement initState
     print("----------------- VISUALIZACAO.DART -----------------");
+    buscarUser();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: snack,
       appBar: AppBar(
         title: Text("Visualização do Projeto"),
         centerTitle: true,
@@ -88,9 +123,7 @@ class _VisualizacaoState extends State<Visualizacao> {
                 alignment: Alignment.center,
                 child: RaisedButton(
                   onPressed: () {
-                    setState(() {
-                      launcher(widget.github);
-                    });
+                    launcher(widget.github);
                   },
                   child: Text(
                     "GitHub do Projeto",
@@ -116,6 +149,20 @@ class _VisualizacaoState extends State<Visualizacao> {
               Text(
                 "${widget.autor}",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              RaisedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Perfil(
+                                user: user,
+                              )));
+                },
+                child: Text(
+                  "Visualizar Perfil de: ${widget.autor}",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
             ],
           ),
