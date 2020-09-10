@@ -28,10 +28,7 @@ class _LoginState extends State<Login> {
       login = true;
       await connect(_googleSignIn.currentUser.email, senha);
     } catch (e) {
-      setState(() {
-        email = "";
-        senha = "";
-      });
+      await mostrarSnack("login google erro");
       print(e);
     }
   }
@@ -43,7 +40,7 @@ class _LoginState extends State<Login> {
       conn.query("select * from users where email = ?",
           [_googleSignIn.currentUser.email]).then((value) {
         if (value.length == 0) {
-          mostrarSnack();
+          mostrarSnack("Usuário não cadastrado");
           print("'Login.dart': Usuário não cadastrado pelo google");
         } else {
           value.forEach((element) {
@@ -65,7 +62,7 @@ class _LoginState extends State<Login> {
       conn.query("select * from users where email = ? and senha = ?",
           [email, senha]).then((value) {
         if (value.length == 0) {
-          mostrarSnack();
+          mostrarSnack("Usuário não cadastrado");
           print("'Login.dart': Usuário não cadastrado");
         } else {
           value.forEach((element) {
@@ -86,9 +83,8 @@ class _LoginState extends State<Login> {
     }
   }
 
-  void mostrarSnack() async {
-    snack.currentState
-        .showSnackBar(SnackBar(content: Text("Usuário não cadastrado")));
+  void mostrarSnack(texto) async {
+    snack.currentState.showSnackBar(SnackBar(content: Text(texto)));
   }
 
   @override
