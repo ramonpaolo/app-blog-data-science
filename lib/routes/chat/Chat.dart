@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import './Visualizacao.dart';
 
 class Chat extends StatefulWidget {
-  Chat({Key key, this.id_user}) : super(key: key);
+  Chat({Key key, this.id_user, this.name}) : super(key: key);
   final int id_user;
+  final String name;
+
   @override
   _ChatState createState() => _ChatState();
 }
@@ -47,7 +49,6 @@ class _ChatState extends State<Chat> {
       "descricao": "Grupo para ajudar você a construir seu Networking :)"
     },
   ];
-
   @override
   void initState() {
     // TODO: implement initState
@@ -68,6 +69,7 @@ class _ChatState extends State<Chat> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => Visualizacao(
+                                  name: widget.name,
                                   titulo: grupos[index]["nome"],
                                   imagem: grupos[index]["imagem"],
                                   id_user: widget.id_user,

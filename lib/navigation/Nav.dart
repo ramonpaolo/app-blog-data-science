@@ -77,9 +77,7 @@ class _NavState extends State<Nav> {
       body: index == 0
           ? Home()
           : index == 1
-              ? Chat(
-                  id_user: user["id"],
-                )
+              ? Chat(id_user: user["id"], name: user["name"])
               : index == 2
                   ? Users(
                       email: widget.email,

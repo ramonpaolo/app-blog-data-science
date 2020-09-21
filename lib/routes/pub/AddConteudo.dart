@@ -16,6 +16,10 @@ class _AddConteudoState extends State<AddConteudo> {
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
 
+  List<bool> _selections = List.generate(2, (index) => false);
+
+  FontStyle format_text = FontStyle.normal;
+
   String titulo;
   String rapida_descricao;
   String descricao;
@@ -74,7 +78,9 @@ class _AddConteudoState extends State<AddConteudo> {
                     "Breve descrição não informado", rapida_descricao),
                 TextFormField(
                   keyboardType: TextInputType.multiline,
+                  style: TextStyle(fontStyle: format_text),
                   minLines: 5,
+                  enableInteractiveSelection: true,
                   maxLines: 8,
                   decoration: InputDecoration(labelText: "Descrição"),
                   onChanged: (value) {
@@ -83,6 +89,28 @@ class _AddConteudoState extends State<AddConteudo> {
                       print(descricao);
                     });
                   },
+                ),
+                Divider(
+                  color: Colors.white,
+                ),
+                ToggleButtons(
+                  children: [Icon(Icons.format_italic), Icon(Icons.fastfood)],
+                  isSelected: _selections,
+                  onPressed: (index) {
+                    setState(() {
+                      _selections[index] = !_selections[index];
+                      if (_selections[0]) {
+                        format_text = FontStyle.italic;
+                      } else {
+                        format_text = FontStyle.normal;
+                      }
+                    });
+                  },
+                  selectedColor: Colors.red,
+                  color: Colors.black,
+                ),
+                Divider(
+                  color: Colors.white,
                 ),
                 Tooltip(
                   message: "Fazer publicação desse artigo",
