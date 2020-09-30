@@ -1,6 +1,9 @@
-import '../../navigation/Nav.dart';
+//---- Packages
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
+
+//---- Screens
+import 'package:data_science/src/navigation/Nav.dart';
 
 class AddConteudo extends StatefulWidget {
   AddConteudo({Key key, this.github, this.id_user, this.email})
@@ -13,21 +16,26 @@ class AddConteudo extends StatefulWidget {
 }
 
 class _AddConteudoState extends State<AddConteudo> {
+//---- Variables
+
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
 
-  List<bool> _selections = List.generate(2, (index) => false);
-
   FontStyle format_text = FontStyle.normal;
+
+  List<bool> _selections = List.generate(2, (index) => false);
 
   String titulo;
   String rapida_descricao;
   String descricao;
   String github;
 
+  var settings =
+      ConnectionSettings(host: "", user: "", password: "", db: "", port: 0000);
+
+//---- Functions
+
   void connection(titulo, github, rapida_descricao, descricao, id_user) async {
-    print("Funcao $github");
-    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
     conn.query(
         "insert into conteudo (id_conteudo, title, github, rapida_descricao, descricao, id_user) values(null,?,?,?,?,?)",
@@ -47,6 +55,7 @@ class _AddConteudoState extends State<AddConteudo> {
   void initState() {
     // TODO: implement initState
     print("----------------- ADD-CONTEUDO.DART -----------------");
+    github = widget.github;
     super.initState();
   }
 
@@ -67,11 +76,21 @@ class _AddConteudoState extends State<AddConteudo> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                formulario(
+                TextField(
+                  keyboardType: TextInputType.url,
+                  decoration: InputDecoration(
+                      labelText: "Digite o link do projeto no github*",
+                      prefixText: "${widget.github}"),
+                  onChanged: (context) {
+                    github = context;
+                    print(github);
+                  },
+                ),
+                /*formulario(
                     TextInputType.url,
                     "Digite o link do projeto no github (opcional)",
                     "",
-                    github),
+                    github),*/
                 formulario(TextInputType.text, "Digite o Título",
                     "Título não informado", titulo),
                 formulario(TextInputType.text, "Uma breve descrição",
@@ -117,9 +136,8 @@ class _AddConteudoState extends State<AddConteudo> {
                   child: RaisedButton(
                       onPressed: () async {
                         if (form.currentState.validate()) {
-                          print("Form: $github");
-                          await connection(titulo, github, rapida_descricao,
-                              descricao, widget.id_user);
+                          await connection(titulo, widget.github + github,
+                              rapida_descricao, descricao, widget.id_user);
                         } else {
                           snack.currentState.showSnackBar(SnackBar(
                             content: Text("Campos invalidos"),
@@ -132,6 +150,7 @@ class _AddConteudoState extends State<AddConteudo> {
                         style: TextStyle(color: Colors.white),
                       )),
                 ),
+                Text("* Opcional")
               ],
             ),
           ),

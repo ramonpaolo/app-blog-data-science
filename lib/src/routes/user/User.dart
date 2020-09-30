@@ -1,6 +1,9 @@
+//---- Packages
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import './Edit.dart';
+
+//---- Screens
+import 'package:data_science/src/routes/user/Edit.dart';
 
 class Users extends StatefulWidget {
   Users(
@@ -24,7 +27,11 @@ class Users extends StatefulWidget {
 }
 
 class _UsersState extends State<Users> {
+//---- Variables
+
   Map user = {};
+
+//---- Functions
 
   Future getDados() async {
     return [
@@ -38,7 +45,7 @@ class _UsersState extends State<Users> {
   }
 
   void launcher(url) async {
-    if (await canLaunch(url)) {
+    if (await canLaunch("$url")) {
       launch(url);
     } else {
       launch("https://youtube.com");

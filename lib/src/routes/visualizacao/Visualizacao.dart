@@ -1,7 +1,10 @@
+//---- Packages
 import 'package:flutter/material.dart';
-import './Perfil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mysql1/mysql1.dart';
+
+//---- Screens
+import 'package:data_science/src/routes/visualizacao/Perfil.dart';
 
 class Visualizacao extends StatefulWidget {
   Visualizacao(
@@ -27,22 +30,31 @@ class Visualizacao extends StatefulWidget {
 }
 
 class _VisualizacaoState extends State<Visualizacao> {
+//---- Variables
+
   final snack = GlobalKey<ScaffoldState>();
+
   Map user;
 
+//---- Functions
+
   void launcher(url) async {
-    if (await canLaunch("${url}")) {
+    if (await canLaunch("$url")) {
       launch(url);
     } else {
       print("Deu erro no link: $url");
       snack.currentState
-          .showSnackBar(SnackBar(content: Text("Link '$url' com erro")));
-      //throw "Operação não pode ser realizada";
+          .showSnackBar(SnackBar(content: Text("Link ' $url ' com erro")));
     }
   }
 
   Future buscarUser() async {
-    var settings = ConnectionSettings();
+    var settings = ConnectionSettings(
+        host: "mysql669.umbler.com",
+        user: "ramon_paolo",
+        password: "familiAMaram12.",
+        db: "data-science",
+        port: 41890);
     var conn = await MySqlConnection.connect(settings);
     var results = await conn
         .query("select * from users where id_user = ?", [widget.id_user]);
@@ -55,7 +67,7 @@ class _VisualizacaoState extends State<Visualizacao> {
       };
     });
 
-    conn.close();
+    await conn.close();
     return user;
   }
 

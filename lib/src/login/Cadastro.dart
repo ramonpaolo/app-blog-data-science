@@ -1,8 +1,11 @@
-import '../navigation/Nav.dart';
+//---- Packages
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
+
+//---- Screens
+import 'package:data_science/src/navigation/Nav.dart';
 
 class Cadastro extends StatefulWidget {
   @override
@@ -10,17 +13,26 @@ class Cadastro extends StatefulWidget {
 }
 
 class _CadastroState extends State<Cadastro> {
+  //---- Variables
+
   final form = GlobalKey<FormState>();
   final snack = GlobalKey<ScaffoldState>();
+
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ["email", "https://www.googleapis.com/auth/cloud-platform"]);
+
+  int contasExistentes;
+
   String nome;
   String email;
   String senha;
   String github = "https://github.com/";
   String linkedin = "https://linkedin/in/";
-  int contasExistentes;
-  var settings = mysql.ConnectionSettings();
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: ["email", "https://www.googleapis.com/auth/cloud-platform"]);
+
+  var settings = mysql.ConnectionSettings(
+      host: "", user: "", password: "", db: "", port: 0000);
+
+  //---- Functions
 
   Future cadastroGoogle() async {
     try {
@@ -35,6 +47,7 @@ class _CadastroState extends State<Cadastro> {
 
   Future connection(nome, email, senha, github, linkedin) async {
     contasExistentes = 0;
+
     var conn = await mysql.MySqlConnection.connect(settings);
     var results =
         await conn.query("select email from users where email = ?", [email]);
@@ -54,7 +67,7 @@ class _CadastroState extends State<Cadastro> {
     snack.currentState.showSnackBar(SnackBar(content: Text(text)));
   }
 
-  void nextTela(email) async {
+  void nextScreen(email) async {
     Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.pushReplacement(
         context,
@@ -117,7 +130,7 @@ class _CadastroState extends State<Cadastro> {
                               await connection(
                                   nome, email, senha, github, linkedin);
                               if (contasExistentes == 0) {
-                                nextTela(email);
+                                nextScreen(email);
                               } else {
                                 snackbar("Email já está sendo utilizado");
                               }
@@ -145,8 +158,8 @@ class _CadastroState extends State<Cadastro> {
                             snackbar("Cadastro Realizado com sucesso");
                             await Future.delayed(
                                 Duration(seconds: 2),
-                                () =>
-                                    nextTela(_googleSignIn.currentUser.email));
+                                () => nextScreen(
+                                    _googleSignIn.currentUser.email));
                           } else {
                             snackbar("Esse Email já está sendo utilizado");
                           }

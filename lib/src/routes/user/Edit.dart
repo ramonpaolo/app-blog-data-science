@@ -1,3 +1,4 @@
+//---- Packages
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 
@@ -23,6 +24,10 @@ class Edit extends StatefulWidget {
 }
 
 class _EditState extends State<Edit> {
+//---- Variables
+
+  bool snack = false;
+
   final key = GlobalKey<FormState>();
 
   String email;
@@ -30,22 +35,24 @@ class _EditState extends State<Edit> {
   String linkedin;
   String nome;
   String descricao;
-  bool snack = false;
+
+  var settings =
+      ConnectionSettings(host: "", user: "", password: "", db: "", port: 0000);
+
+//---- Functions
 
   Future connection(id, email, github, linkedin, nome, descricao) async {
-    var settings = ConnectionSettings();
     var conn = await MySqlConnection.connect(settings);
-    var results = await conn
+    await conn
         .query("update users set github = ? where id_user = ?", [github, id]);
-    results = await conn
+    await conn
         .query("update users set email = ? where id_user = ?", [email, id]);
-    results = await conn.query(
+    await conn.query(
         "update users set linkedin = ? where id_user = ?", [linkedin, id]);
-    results = await conn
-        .query("update users set nome = ? where id_user = ?", [nome, id]);
-    results = await conn.query(
+    await conn.query("update users set nome = ? where id_user = ?", [nome, id]);
+    await conn.query(
         "update users set descricao = ? where id_user = ?", [descricao, id]);
-    conn.close();
+    await conn.close();
   }
 
   @override

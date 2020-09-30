@@ -1,10 +1,11 @@
+//---- Packages
 import 'package:flutter/material.dart';
-import './Cadastro.dart';
-import '../navigation/Nav.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:google_sign_in/google_sign_in.dart';
 
-//https://sourceforge.net/projects/linux-4-flutter-devs/
+//---- Screens
+import 'package:data_science/src/login/Cadastro.dart';
+import 'package:data_science/src/navigation/Nav.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -12,15 +13,26 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  //---- Variables
+
+  bool login = false;
+
+  final snack = GlobalKey<ScaffoldState>();
+
   GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: ["email", "https://www.googleapis.com/auth/cloud-platform"]);
-  final snack = GlobalKey<ScaffoldState>();
+
+  int valor;
+
+  Map dados;
 
   String email;
   String senha;
-  int valor;
-  Map dados;
-  bool login = false;
+
+  var settings = mysql.ConnectionSettings(
+      host: "", user: "", password: "", db: "", port: 0000);
+
+  //---- Functions
 
   Future loginGoogle() async {
     try {
@@ -28,16 +40,15 @@ class _LoginState extends State<Login> {
       login = true;
       await connect(_googleSignIn.currentUser.email, senha);
     } catch (e) {
-      await mostrarSnack("login google erro");
+      mostrarSnack("login google erro");
       print(e);
     }
   }
 
   Future connect(email, senha) async {
-    var settings = mysql.ConnectionSettings();
     if (login) {
       var conn = await mysql.MySqlConnection.connect(settings);
-      conn.query("select * from users where email = ?",
+      await conn.query("select * from users where email = ?",
           [_googleSignIn.currentUser.email]).then((value) {
         if (value.length == 0) {
           mostrarSnack("Usuário não cadastrado");
@@ -59,7 +70,7 @@ class _LoginState extends State<Login> {
       });
     } else {
       var conn = await mysql.MySqlConnection.connect(settings);
-      conn.query("select * from users where email = ? and senha = ?",
+      await conn.query("select * from users where email = ? and senha = ?",
           [email, senha]).then((value) {
         if (value.length == 0) {
           mostrarSnack("Usuário não cadastrado");

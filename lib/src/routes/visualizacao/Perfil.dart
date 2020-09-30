@@ -1,9 +1,14 @@
+//---- Packages
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Perfil extends StatelessWidget {
   Perfil({Key key, this.user}) : super(key: key);
+//---- Variables
+
   final Map user;
+
+//---- Functions
 
   void launcher(url) async {
     try {

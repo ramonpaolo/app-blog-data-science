@@ -1,6 +1,9 @@
+//---- packages
 import 'package:flutter/material.dart';
 import 'package:simple_splashscreen/simple_splashscreen.dart';
-import './login/Login.dart';
+
+//---- Screens
+import 'package:data_science/src/login/Login.dart';
 
 void main() {
   runApp(MaterialApp(
